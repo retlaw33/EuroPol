@@ -24,17 +24,20 @@ public class StolenVehicleController {
     }
 
     @GetMapping("/{id}")
-    public @ResponseBody VehicleDto getVehicle(@RequestParam String hashedLicensePlate){
-        VehicleDto dto = null;
+    public VehicleDto getVehicle(@RequestParam String hashedLicensePlate){
+        StolenVehicle sv = stolenVehicleRepository.findByHashedLicensePlate(hashedLicensePlate);
+        return vehicleMapper.VehicleToDto(sv);
+
+        /*VehicleDto dto = null;
         for (StolenVehicle sv : stolenVehicleRepository.findAll()){
             if (sv.getHashedLicensePlate() == hashedLicensePlate)
                 dto = vehicleMapper.VehicleToDto(sv);
         }
-        return dto;
+        return dto;*/
     }
 
-    @GetMapping(path="/all")
-    public @ResponseBody Iterable<VehicleDto> getAllStolenVehicles() {
+    @GetMapping()
+    public Iterable<VehicleDto> getAllStolenVehicles() {
         List<VehicleDto> dtos = new ArrayList<>();
         for (StolenVehicle sv : stolenVehicleRepository.findAll()){
             dtos.add(vehicleMapper.VehicleToDto(sv));
@@ -42,14 +45,15 @@ public class StolenVehicleController {
         return dtos;
     }
 
-    @PostMapping(path="/add")
+    @PostMapping()
     public void addVehicle(VehicleDto dto) {
         StolenVehicle vehicle =  vehicleMapper.DtoToNewStolenVehicle(dto);
         stolenVehicleRepository.save(vehicle);
     }
 
-    @DeleteMapping(path="/delete")
+    @DeleteMapping()
     public void deleteVehicle(VehicleDto dto) {
-
+        StolenVehicle vehicle =  vehicleMapper.DtoToNewStolenVehicle(dto);
+        stolenVehicleRepository.delete(vehicle);
     }
 }
